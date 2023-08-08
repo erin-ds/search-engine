@@ -1,45 +1,41 @@
 package searchengine.model;
 
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "search_index")
-@Getter
+@Table
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class SearchIndex {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "search_index_id")
+    private int searchIndexID;
 
-    @ManyToOne
-    @JoinColumn(name = "page_id", nullable = false)
-    private Page page;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "page_id", name = "page_id")
+    private PageEntity pageID;
 
-    @ManyToOne
-    @JoinColumn(name = "lemma_id", nullable = false)
-    private Lemma lemma;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "lemma_id", name = "lemma_id")
+    private LemmaEntity lemmaID;
 
-    @Column(name = "lemma_rank", nullable = false)
-    private float lemmaRank;
+    @Column(name = "search_rank", nullable = false)
+    private float searchRank;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SearchIndex that)) return false;
-        return getId() == that.getId() && Float.compare(that.getLemmaRank(), getLemmaRank()) == 0 && Objects.equals(getPage(), that.getPage()) && Objects.equals(getLemma(), that.getLemma());
+        return getSearchIndexID() == that.getSearchIndexID() && Float.compare(getSearchRank(), that.getSearchRank()) == 0 && Objects.equals(getPageID(), that.getPageID()) && Objects.equals(getLemmaID(), that.getLemmaID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getPage(), getLemma(), getLemmaRank());
+        return Objects.hash(getSearchIndexID(), getPageID(), getLemmaID(), getSearchRank());
     }
 }
