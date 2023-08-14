@@ -1,6 +1,7 @@
 package searchengine.services.parsing;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -19,6 +20,7 @@ import searchengine.repositories.SiteRepository;
 import java.util.*;
 import java.util.concurrent.RecursiveAction;
 
+@Slf4j
 public class SiteParser extends RecursiveAction {
     private final String url;
     private final TreeSet<String> hrefList;
@@ -87,7 +89,7 @@ public class SiteParser extends RecursiveAction {
             searchIndexRepository.saveAll(searchIndexList);
         }
         catch (HttpStatusException e) {
-            System.out.println(url + " can't be parsed");
+            log.info("Не удается выполнить парсинг сайта {}", url);
         }
 
             List<String> links = collectLinks(url);
@@ -106,7 +108,7 @@ public class SiteParser extends RecursiveAction {
                             searchIndexRepository);
                     siteParser.fork();
                     hrefList.add(link);
-                    System.out.println("parsing " + link);
+                    log.info("Парсинг {}", link);
                     tasks.add(siteParser);
                 }
             }
